@@ -1,5 +1,5 @@
 import { swalClasses } from '../classes.js'
-import { getContainer, getPopup } from './getters.js'
+import { getContainer, getPopup, setTarget } from './getters.js'
 import { addClass, removeClass, getChildByClass, setInnerHtml } from './domUtils.js'
 import { isNodeEnv } from '../isNodeEnv.js'
 import { error } from '../utils.js'
@@ -106,7 +106,7 @@ const setupAccessibility = (params) => {
 }
 
 const setupRTL = (targetElement) => {
-  if (window.getComputedStyle(targetElement).direction === 'rtl') {
+  if (window.getComputedStyle(targetElement.host || targetElement).direction === 'rtl') {
     addClass(getContainer(), swalClasses.rtl)
   }
 }
@@ -115,6 +115,9 @@ const setupRTL = (targetElement) => {
  * Add modal + backdrop to DOM
  */
 export const init = (params) => {
+  const targetElement = getTarget(params.target)
+  setTarget(targetElement)
+
   // Clean up the old popup container if it exists
   const oldContainerExisted = resetOldContainer()
 
@@ -131,7 +134,6 @@ export const init = (params) => {
   }
   setInnerHtml(container, sweetHTML)
 
-  const targetElement = getTarget(params.target)
   targetElement.appendChild(container)
 
   setupAccessibility(params)
